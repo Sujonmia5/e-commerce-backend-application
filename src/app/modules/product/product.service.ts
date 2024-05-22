@@ -11,7 +11,7 @@ const getAllProductIntoDB = async (text: string | null) => {
     const result = await Product.find({});
     return result;
   }
-  console.log(text);
+  // console.log(text);
   const result = await Product.find({
     $or: [
       { name: { $regex: text, $options: 'i' } },
