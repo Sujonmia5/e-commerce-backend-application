@@ -22,10 +22,10 @@ app.all('*', (req: Request, res: Response) => {
 
 // global error function
 app.use((err: Error, req: Request, res: Response) => {
-  console.log(req.url);
+  // console.log(err);
   res.status(500).json({
     success: false,
-    message: err.message,
+    message: err?.message || err,
   });
 });
 

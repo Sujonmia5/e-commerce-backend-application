@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { TProduct } from './product.interface';
 import { serviceProduct } from './product.service';
+import { productValidationSchema } from './product.validation';
 
 const createProduct = async (
   req: Request,
@@ -9,7 +10,15 @@ const createProduct = async (
 ) => {
   try {
     const data: TProduct = req.body;
-    const result = await serviceProduct.createProductIntoDB(data);
+
+    const { error, value } = productValidationSchema.validate(data);
+    if (error) {
+      res.status(500).json({
+        success: false,
+        message: `Product not created! ${error?.message}`,
+      });
+    }
+    const result = await serviceProduct.createProductIntoDB(value);
     res.status(200).json({
       success: true,
       message: 'Product created successfully!',
