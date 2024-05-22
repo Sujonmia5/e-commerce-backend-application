@@ -3,6 +3,7 @@ import { TProduct } from './product.interface';
 import { serviceProduct } from './product.service';
 import { productValidationSchema } from './product.validation';
 
+//product creation controller
 const createProduct = async (
   req: Request,
   res: Response,
@@ -10,10 +11,10 @@ const createProduct = async (
 ) => {
   try {
     const data: TProduct = req.body;
-
+    // joi validation schema call
     const { error, value } = productValidationSchema.validate(data);
     if (error) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: `Product not created! ${error?.message}`,
       });
@@ -29,16 +30,19 @@ const createProduct = async (
   }
 };
 
+//get all product controller
 const getAllProduct = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const searchTerm = req.query.searchTerm as string;
+    // single product get start
+    const query = req.query;
+    const searchTerm = req?.query?.searchTerm as string;
     if (searchTerm) {
-      const result = await serviceProduct.searchProductIntoDB(searchTerm);
-
+      const result = await serviceProduct.getAllProductIntoDB(searchTerm);
+      // console.log(result);
       if (!result.length) {
         const err = new Error('Products not founded');
         return next(err);
@@ -48,12 +52,18 @@ const getAllProduct = async (
         message: `Products matching search term ${searchTerm} fetched successfully!`,
         data: result,
       });
-    } else {
-      const result = await serviceProduct.getAllProductIntoDB();
+    } // single product get completed
+    else if (Object.keys(query).length === 0) {
+      const result = await serviceProduct.getAllProductIntoDB(null);
       res.status(200).json({
         success: true,
         message: 'Products fetched successfully!',
         data: result,
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: 'product not founded',
       });
     }
   } catch (err) {
@@ -104,8 +114,7 @@ const deleteProduct = async (
     console.log(result);
     res.status(200).json({
       success: true,
-      message: 'Products fetched successfully!',
-      data: null,
+      message: 'Products deleted successfully!',
     });
   } catch (err) {
     next(err);

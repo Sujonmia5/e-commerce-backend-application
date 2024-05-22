@@ -36,7 +36,7 @@ orderSchema.pre('save', async function (next) {
     product.inventory.quantity -= quantity;
     await Product.updateOne({ _id: productId }, product);
   }
-  next;
+  next();
 });
 
 orderSchema.post('save', async function (doc, next) {
@@ -48,7 +48,7 @@ orderSchema.post('save', async function (doc, next) {
       product.inventory.inStock = false;
       await Product.updateOne({ _id: productId }, product);
     }
-    next;
+    next();
   }
 });
 

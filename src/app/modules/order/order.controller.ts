@@ -1,12 +1,21 @@
 import { Request, Response } from 'express';
 import { TOrder } from './order.interface';
 import { orderService } from './order.service';
+import { orderValidationSchema } from './order.validation';
 
 const createOrders = async (req: Request, res: Response) => {
   try {
     const orderData: TOrder = req.body;
 
-    const result = await orderService.createOrdersIntoDB(orderData);
+    const { error, value } = orderValidationSchema.validate(orderData);
+    if (error) {
+      return res.status(500).json({
+        success: false,
+        message: `Order  not created! ${error?.message}`,
+      });
+    }
+
+    const result = await orderService.createOrdersIntoDB(value);
     // console.log(result);
     res.status(200).json({
       success: true,
@@ -16,7 +25,7 @@ const createOrders = async (req: Request, res: Response) => {
   } catch (err) {
     res.status(500).json({
       success: false,
-      message: 'Insufficient quantity available in inventory',
+      message: err,
     });
   }
 };

@@ -12,6 +12,13 @@ app.use(cors());
 app.use('/api', productRouter);
 app.use('/api', ordersRoutes);
 
+app.get('/', (req: Request, res: Response) => {
+  res.status(200).json({
+    success: true,
+    message: 'server is working',
+  });
+});
+
 app.all('*', (req: Request, res: Response) => {
   console.log(req.url);
   res.status(400).json({
@@ -22,7 +29,6 @@ app.all('*', (req: Request, res: Response) => {
 
 // global error function
 app.use((err: Error, req: Request, res: Response) => {
-  // console.log(err);
   res.status(500).json({
     success: false,
     message: err?.message || err,

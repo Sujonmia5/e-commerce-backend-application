@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-// // Zoi validation schema
+// Zoi validation schema
 
 const joiVariantSchema = Joi.object({
   type: Joi.string().required().messages({
@@ -13,9 +13,8 @@ const joiVariantSchema = Joi.object({
   }),
 });
 
-// Define the Joi schema for inventory
 const inventoryValidationSchema = Joi.object({
-  quantity: Joi.number().required().messages({
+  quantity: Joi.number().min(1).required().messages({
     'number.base': '"quantity" should be a type of number',
     'any.required': '"quantity" is a required',
   }),
@@ -25,7 +24,7 @@ const inventoryValidationSchema = Joi.object({
   }),
 });
 
-// Define the Joi schema for the product
+// main product joi validation schema
 export const productValidationSchema = Joi.object({
   name: Joi.string().required().messages({
     'string.base': '"name" should be a type of text',

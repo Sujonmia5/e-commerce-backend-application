@@ -1,3 +1,5 @@
+// Product TypeScript type
+
 export type TInventory = {
   quantity: number;
   inStock: boolean;
