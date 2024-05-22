@@ -111,7 +111,7 @@ const deleteProduct = async (
   try {
     const id = req.params.productId;
     const result = await serviceProduct.deleteProductIntoDB(id);
-    console.log(result);
+    // console.log(result);
     res.status(200).json({
       success: true,
       message: 'Products deleted successfully!',
