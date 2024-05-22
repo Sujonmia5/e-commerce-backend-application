@@ -1,9 +1,9 @@
-type TInventory = {
+export type TInventory = {
   quantity: number;
   inStock: boolean;
 };
 
-type TVariants = {
+export type TVariants = {
   type: string;
   value: string;
 };
@@ -14,6 +14,6 @@ export type TProduct = {
   price: number;
   category: string;
   tags: string[];
-  variants: TVariants[];
+  variants: [TVariants];
   inventory: TInventory;
 };
