@@ -2,36 +2,6 @@ import Joi from 'joi';
 
 // // Zoi validation schema
 
-// const variantSchema = z.object({
-//   type: z.string({ message: 'Type is required.' }),
-//   value: z.string({ message: 'Value is required.' }),
-// });
-
-// const inventorySchema = z.object({
-//   quantity: z.number({ message: 'Quantity is required must be number.' }),
-//   inStock: z.boolean({ message: 'InStock is required must be boolean type.' }),
-// });
-
-// export const productValidationSchema = z.object({
-//   name: z.string({ message: 'Product Name is required.' }),
-//   description: z.string({
-//     message: 'Description is required.',
-//   }),
-//   price: z
-//     .number()
-//     .positive({ message: 'Price is required and must be positive value.' }),
-//   category: z.string({ message: 'Category is required.' }),
-//   tags: z.array(z.string({ message: 'Tags is required.' })),
-//   variants: z
-//     .array(variantSchema)
-//     .nonempty({ message: 'Variants is required in array of object.' }),
-//   inventory: inventorySchema,
-// });
-
-// export const validateProduct = (product: TProduct) => {
-//   return productValidationSchema.safeParse(product);
-// };
-
 const joiVariantSchema = Joi.object({
   type: Joi.string().required().messages({
     'string.base': '"type" should be a type of text',
@@ -39,7 +9,7 @@ const joiVariantSchema = Joi.object({
   }),
   value: Joi.string().required().messages({
     'string.base': '"value" should be a type of text',
-    'any.required': '"value" is a required field',
+    'any.required': '"value" is a required',
   }),
 });
 
@@ -47,11 +17,11 @@ const joiVariantSchema = Joi.object({
 const inventoryValidationSchema = Joi.object({
   quantity: Joi.number().required().messages({
     'number.base': '"quantity" should be a type of number',
-    'any.required': '"quantity" is a required field',
+    'any.required': '"quantity" is a required',
   }),
   inStock: Joi.boolean().required().messages({
     'boolean.base': '"inStock" should be a type of boolean',
-    'any.required': '"inStock" is a required field',
+    'any.required': '"inStock" is a required',
   }),
 });
 
@@ -59,19 +29,19 @@ const inventoryValidationSchema = Joi.object({
 export const productValidationSchema = Joi.object({
   name: Joi.string().required().messages({
     'string.base': '"name" should be a type of text',
-    'any.required': '"name" is a required field',
+    'any.required': '"name" is a required',
   }),
   description: Joi.string().required().messages({
     'string.base': '"description" should be a type of text',
-    'any.required': '"description" is a required field',
+    'any.required': '"description" is a required',
   }),
   price: Joi.number().required().messages({
     'number.base': '"price" should be a type of number',
-    'any.required': '"price" is a required field',
+    'any.required': '"price" is a required',
   }),
   category: Joi.string().required().messages({
     'string.base': '"category" should be a type of text',
-    'any.required': '"category" is a required field',
+    'any.required': '"category" is a required',
   }),
   tags: Joi.array()
     .items(
@@ -87,9 +57,9 @@ export const productValidationSchema = Joi.object({
     }),
   variants: Joi.array().items(joiVariantSchema).required().messages({
     'array.base': '"variants" should be an array',
-    'any.required': '"variants" is a required field',
+    'any.required': '"variants" is a required',
   }),
   inventory: inventoryValidationSchema.required().messages({
-    'any.required': '"inventory" is a required field',
+    'any.required': '"inventory" is a required',
   }),
 });
