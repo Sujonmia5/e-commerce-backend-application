@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { productRouter } from './app/modules/product/product.route';
 import { ordersRoutes } from './app/modules/order/order.route';
@@ -13,6 +13,7 @@ app.use('/api', productRouter);
 app.use('/api', ordersRoutes);
 
 app.all('*', (req: Request, res: Response) => {
+  console.log(req.url);
   res.status(400).json({
     success: false,
     message: 'Route not found',
@@ -20,8 +21,8 @@ app.all('*', (req: Request, res: Response) => {
 });
 
 // global error function
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  //   console.error(err);
+app.use((err: Error, req: Request, res: Response) => {
+  console.log(req.url);
   res.status(500).json({
     success: false,
     message: err.message,

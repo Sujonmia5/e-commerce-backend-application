@@ -1,7 +1,6 @@
 import { Schema, model } from 'mongoose';
 import { TOrder } from './order.interface';
 import { Product } from '../product/product.model';
-import { NextFunction } from 'express';
 
 export const orderSchema = new Schema<TOrder>({
   email: {
@@ -35,7 +34,7 @@ orderSchema.pre('save', async function (next) {
       return next(err);
     }
     product.inventory.quantity -= quantity;
-    const result = await Product.updateOne({ _id: productId }, product);
+    await Product.updateOne({ _id: productId }, product);
   }
   next;
 });
@@ -47,7 +46,7 @@ orderSchema.post('save', async function (doc, next) {
     const quantity = product.inventory.quantity;
     if (quantity === 0) {
       product.inventory.inStock = false;
-      const result = await Product.updateOne({ _id: productId }, product);
+      await Product.updateOne({ _id: productId }, product);
     }
     next;
   }

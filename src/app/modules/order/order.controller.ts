@@ -24,8 +24,8 @@ const createOrders = async (req: Request, res: Response) => {
 const getAllOrders = async (req: Request, res: Response) => {
   try {
     const query = req.query;
-    let result: any = null;
-    console.log(query);
+    let result = null;
+    // console.log(query);
     if (Object.keys(query).length === 0) {
       const orders = await orderService.getAllOrdersIntoDB();
       result = orders;
