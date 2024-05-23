@@ -1,4 +1,5 @@
-import express, { Request, Response } from 'express';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import { productRouter } from './app/modules/product/product.route';
 import { ordersRoutes } from './app/modules/order/order.route';
@@ -19,7 +20,7 @@ app.get('/', (req: Request, res: Response) => {
   });
 });
 
-app.all('*', (req: Request, res: Response) => {
+app.all('*', (req: Request, res: Response, next: NextFunction) => {
   // console.log(req.url);
   res.status(400).json({
     success: false,
@@ -28,10 +29,11 @@ app.all('*', (req: Request, res: Response) => {
 });
 
 // global error function
-app.use((err: Error, req: Request, res: Response) => {
-  res.status(500).json({
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  res.status(400).json({
     success: false,
-    message: err?.message || err,
+    message: err?.message || 'Something went wrong',
   });
 });
 

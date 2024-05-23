@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from 'express';
 import { TProduct } from './product.interface';
 import { serviceProduct } from './product.service';
@@ -14,10 +15,8 @@ const createProduct = async (
     // joi validation schema call
     const { error, value } = productValidationSchema.validate(data);
     if (error) {
-      return res.status(500).json({
-        success: false,
-        message: `Product not created! ${error?.message}`,
-      });
+      const err = new Error(`Product not created! ${error.message}`);
+      return next(err);
     }
     const result = await serviceProduct.createProductIntoDB(value);
     res.status(200).json({
@@ -25,7 +24,7 @@ const createProduct = async (
       message: 'Product created successfully!',
       data: result,
     });
-  } catch (err) {
+  } catch (err: any) {
     next(err);
   }
 };
@@ -44,8 +43,7 @@ const getAllProduct = async (
       const result = await serviceProduct.getAllProductIntoDB(searchTerm);
       // console.log(result);
       if (!result.length) {
-        const err = new Error('Products not founded');
-        return next(err);
+        return next(new Error('Products not founded'));
       }
       res.status(200).json({
         success: true,
@@ -61,26 +59,27 @@ const getAllProduct = async (
         data: result,
       });
     } else {
-      res.status(500).json({
-        success: false,
-        message: 'product not founded',
-      });
+      return next(new Error('product not founded'));
     }
-  } catch (err) {
+  } catch (err: any) {
     next(err);
   }
 };
 
+//get product by id controller
 const getProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.productId;
     const result = await serviceProduct.getProductIntoDB(id);
-    res.status(200).json({
-      success: true,
-      message: 'Products fetched successfully!',
-      data: result,
-    });
-  } catch (err) {
+    if (result) {
+      res.status(200).json({
+        success: true,
+        message: 'Products fetched successfully!',
+        data: result,
+      });
+    }
+    next(new Error('Products not founded'));
+  } catch (err: any) {
     next(err);
   }
 };
@@ -93,16 +92,32 @@ const updateProduct = async (
   try {
     const id = req.params.productId;
     const product = req.body;
-    const result = await serviceProduct.updateProductIntoDB(id, product);
-    res.status(200).json({
-      success: true,
-      message: 'Products fetched successfully!',
-      data: result,
+
+    // product Update error check
+    const { error } = productValidationSchema.validate(product, {
+      abortEarly: false,
     });
-  } catch (err) {
+    const errorData = error?.details.reverse()[0];
+    if (errorData?.message.includes('not allowed')) {
+      return next(new Error(`${errorData?.message}`));
+    }
+    // final data updated
+    const result = await serviceProduct.updateProductIntoDB(id, product);
+    if (result) {
+      // console.log(result);
+      res.status(200).json({
+        success: true,
+        message: 'Products fetched successfully!',
+        data: result,
+      });
+    }
+    return next(new Error('Product not founded'));
+  } catch (err: any) {
     next(err);
   }
 };
+
+// delete product
 const deleteProduct = async (
   req: Request,
   res: Response,
@@ -111,14 +126,14 @@ const deleteProduct = async (
   try {
     const id = req.params.productId;
     const result = await serviceProduct.deleteProductIntoDB(id);
-
-    if (result.deletedCount === 1) {
-      res.status(200).json({
-        success: true,
-        message: 'Products deleted successfully!',
-      });
+    if (!result.deletedCount) {
+      return next(new Error('Products not founded'));
     }
-  } catch (err) {
+    res.status(200).json({
+      success: true,
+      message: 'Products deleted successfully!',
+    });
+  } catch (err: any) {
     next(err);
   }
 };

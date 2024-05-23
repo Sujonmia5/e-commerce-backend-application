@@ -62,3 +62,5 @@ export const productValidationSchema = Joi.object({
     'any.required': '"inventory" is a required',
   }),
 });
+
+// update validation

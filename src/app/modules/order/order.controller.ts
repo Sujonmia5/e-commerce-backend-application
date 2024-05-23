@@ -1,42 +1,55 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { TOrder } from './order.interface';
 import { orderService } from './order.service';
 import { orderValidationSchema } from './order.validation';
 
-const createOrders = async (req: Request, res: Response) => {
+// order creation controller
+const createOrders = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const orderData: TOrder = req.body;
-
     const { error, value } = orderValidationSchema.validate(orderData);
+    // console.log(error);
     if (error) {
-      return res.status(500).json({
+      return res.status(400).json({
         success: false,
         message: `Order  not created! ${error?.message}`,
       });
     }
-
     const result = await orderService.createOrdersIntoDB(value);
-    // console.log(result);
     res.status(200).json({
       success: true,
       message: 'Order created successfully!',
       data: result,
     });
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err,
-    });
+    // console.log(err, 'order create');
+    // res.status(400).send(e);
+    next(err);
   }
 };
 
-const getAllOrders = async (req: Request, res: Response) => {
+// get all orders controller
+const getAllOrders = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const query = req.query;
     let result = null;
-    // console.log(query);
+    // get orders api
     if (Object.keys(query).length === 0) {
-      const orders = await orderService.getAllOrdersIntoDB();
+      const orders = await orderService.getAllOrdersIntoDB(null);
+      if (!orders.length) {
+        return res.status(400).json({
+          success: false,
+          message: 'Orders Not found',
+        });
+      }
       result = orders;
       return res.status(200).json({
         success: true,
@@ -44,7 +57,8 @@ const getAllOrders = async (req: Request, res: Response) => {
         data: result,
       });
     } else if (query.email) {
-      const order = await orderService.getOrdersEmailIntoDB(
+      // get orders with email query
+      const order = await orderService.getAllOrdersIntoDB(
         query?.email as string,
       );
       if (!order.length) {
@@ -60,19 +74,17 @@ const getAllOrders = async (req: Request, res: Response) => {
         data: result,
       });
     } else {
-      res.status(500).json({
+      res.status(400).json({
         success: false,
         message: 'Orders Not found',
       });
     }
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: 'Orders fetched not successfully!',
-    });
+    next(err);
   }
 };
 
+// orders controller object
 export const orderController = {
   createOrders,
   getAllOrders,

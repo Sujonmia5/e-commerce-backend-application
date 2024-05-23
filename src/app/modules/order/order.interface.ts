@@ -1,3 +1,5 @@
+// order type
+
 export type TOrder = {
   email: string;
   productId: string;

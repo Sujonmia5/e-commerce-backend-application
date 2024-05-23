@@ -1,7 +1,7 @@
 import { TProduct } from './product.interface';
 import { Product } from './product.model';
 
-const createProductIntoDB = async (product: TProduct) => {
+const createProductIntoDB = async (product: TProduct): Promise<TProduct> => {
   const result = await Product.create(product);
   return result;
 };
@@ -35,7 +35,7 @@ const updateProductIntoDB = async (id: string, product: TProduct) => {
     const data = await Product.findOne({ _id: id });
     return data;
   }
-  return {};
+  return null;
 };
 
 const deleteProductIntoDB = async (id: string) => {

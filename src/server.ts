@@ -9,7 +9,7 @@ async function main() {
       console.log('server is running on 5000');
     });
   } catch (err) {
-    console.log(err);
+    console.log(err, 'error server');
   }
 }
 main();
